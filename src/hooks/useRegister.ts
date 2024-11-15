@@ -4,11 +4,7 @@ import {Alert} from 'react-native';
 const useRegister = () => {
     const [loading, setLoading] = useState(false);
 
-    const register = async (
-        username: string,
-        email: string,
-        password: string,
-    ) => {
+    const register = async (username: string, email: string, password: string) => {
         const requestBody = {
             email,
             password,
@@ -34,8 +30,12 @@ const useRegister = () => {
                 Alert.alert('Success', 'Registration successful!');
                 return {success: true, data: data.data};
             } else {
-                Alert.alert('Error', data.message || 'Registration failed');
-                return {success: false, message: data.message};
+                // Check if the message is an array
+                const message = Array.isArray(data.message)
+                    ? data.message.join(', ')
+                    : data.message;
+                Alert.alert('Error', message || 'Registration failed');
+                return {success: false, message};
             }
         } catch (error) {
             console.error(error);

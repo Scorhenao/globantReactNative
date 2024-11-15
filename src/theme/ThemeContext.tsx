@@ -12,9 +12,7 @@ export const ThemeProvider: React.FC<{children: ReactNode}> = ({children}) => {
     const [darkMode, setDarkMode] = useState(false);
 
     return (
-        <ThemeContext.Provider value={{darkMode, setDarkMode}}>
-            {children}
-        </ThemeContext.Provider>
+        <ThemeContext.Provider value={{darkMode, setDarkMode}}>{children}</ThemeContext.Provider>
     );
 };
 

@@ -1,5 +1,4 @@
-// src/screens/Login.tsx
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
     View,
     TextInput,
@@ -9,41 +8,44 @@ import {
     ActivityIndicator,
 } from 'react-native';
 import NavBar from '../components/NavBar';
-import colorsDarkMode from '../theme/colorsDarkMode';
-import colorsLightMode from '../theme/colorsLightMode';
-import {useTheme} from '../theme/ThemeContext';
-import useLogin from '../hooks/useLogin'; // Importar el hook
+import { useTheme } from '../theme/ThemeContext';
+import useLogin from '../hooks/useLogin';
+import ColorsDarkMode from '../theme/ColorsDarkMode';
+import ColorsLightMode from '../theme/ColorsLightMode';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
-const LoginScreen = ({navigation}: any) => {
-    const {darkMode} = useTheme();
-    const colors = darkMode ? colorsDarkMode : colorsLightMode;
+const LoginScreen = ({ navigation }: any) => {
+    const { darkMode } = useTheme();
+    const colors = darkMode ? ColorsDarkMode : ColorsLightMode;
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const {login, loading, error} = useLogin(); // Usar el hook
+    const { login, loading, error } = useLogin();
 
     const handleLogin = async () => {
         const token = await login(username, password);
         if (token) {
-            navigation.navigate('Home'); // Navegar a HomeScreen si el login es exitoso
+            // Save the token in AsyncStorage
+            await AsyncStorage.setItem('userToken', token);
+            navigation.navigate('Home'); // Navigate to HomeScreen after login
         }
     };
 
     return (
-        <View style={[styles.container, {backgroundColor: colors.background}]}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             <NavBar />
             <View style={styles.formContainer}>
-                <Text style={[styles.title, {color: colors.text}]}>Login</Text>
+                <Text style={[styles.title, { color: colors.text }]}>Login</Text>
                 <TextInput
-                    style={[styles.input, {borderColor: colors.text}]}
+                    style={[styles.input, { borderColor: colors.text, color: colors.text }]}
                     placeholder="Username"
                     placeholderTextColor={colors.text}
                     value={username}
                     onChangeText={setUsername}
                 />
                 <TextInput
-                    style={[styles.input, {borderColor: colors.text}]}
+                    style={[styles.input, { borderColor: colors.text, color: colors.text }]}
                     placeholder="Password"
                     placeholderTextColor={colors.text}
                     secureTextEntry
@@ -52,20 +54,20 @@ const LoginScreen = ({navigation}: any) => {
                 />
                 {error && <Text style={styles.errorText}>{error}</Text>}
                 <TouchableOpacity
-                    style={[styles.button, {backgroundColor: colors.link}]}
+                    style={[styles.button, { backgroundColor: colors.link }]}
                     onPress={handleLogin}>
                     {loading ? (
                         <ActivityIndicator size="small" color={colors.text} />
                     ) : (
-                        <Text style={[styles.buttonText, {color: colors.text}]}>
+                        <Text style={[styles.buttonText, { color: colors.text }]}>
                             Log In
                         </Text>
                     )}
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={[styles.linkButton, {borderColor: colors.text}]}
+                    style={[styles.linkButton, { borderColor: colors.text }]}
                     onPress={() => navigation.navigate('Register')}>
-                    <Text style={[styles.linkText, {color: colors.text}]}>
+                    <Text style={[styles.linkText, { color: colors.text }]}>
                         Don't have an account? Register
                     </Text>
                 </TouchableOpacity>

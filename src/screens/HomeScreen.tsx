@@ -10,37 +10,41 @@ const HomeScreen = ({navigation}: any) => {
     const colors = darkMode ? ColorsDarkMode : ColorsLightMode;
 
     return (
-        <View style={[styles.container, {backgroundColor: colors.background}]}>
+        <View style={[styles.supContainer, {backgroundColor: colors.background}]}>
             <NavBar />
-            <Image source={require('../assets/logo.png')} style={styles.logo} />
-            <Text style={[{color: colors.text}]}>
-                Welcome to Belatrix S.A manager
-            </Text>
-            <Text style={styles.subText}>
-                Manage your vehicles efficiently and effortlessly
-            </Text>
+            <View style={[styles.container]}>
+                <Image source={require('../assets/logo.png')} style={styles.logo} />
+                <Text style={[{color: colors.text}]}>Welcome to Belatrix S.A manager</Text>
+                <Text style={styles.subText}>
+                    Manage your vehicles efficiently and effortlessly
+                </Text>
 
-            <TouchableOpacity
-                style={styles.button}
-                onPress={() => navigation.navigate('Login')}>
-                <Text style={styles.buttonText}>Log In</Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.button, {backgroundColor: colors.link}]}
+                    onPress={() => navigation.navigate('Login')}>
+                    <Text style={[styles.buttonText, {color: colors.text}]}>Log In</Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity
-                style={[styles.button, styles.registerButton]}
-                onPress={() => navigation.navigate('Register')}>
-                <Text style={styles.buttonText}>Register</Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.button, styles.registerButton]}
+                    onPress={() => navigation.navigate('Register')}>
+                    <Text style={styles.buttonText}>Register</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
+    supContainer: {
+        flex: 1,
+    },
     container: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'center', // Centramos verticalmente
         alignItems: 'center',
-        padding: 20,
+        paddingHorizontal: 20, // Añadir espacio lateral
+        paddingTop: 20, // Evitar que el contenido se solape con el NavBar
     },
     logo: {
         width: 300,
@@ -65,13 +69,11 @@ const styles = StyleSheet.create({
         width: '80%',
         padding: 15,
         borderRadius: 8,
-        backgroundColor: '#007BFF',
         alignItems: 'center',
         marginBottom: 15,
     },
     buttonText: {
         fontSize: 16,
-        color: '#fff',
         fontWeight: 'bold',
     },
     registerButton: {

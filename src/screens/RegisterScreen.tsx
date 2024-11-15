@@ -8,14 +8,14 @@ import {
     ActivityIndicator,
 } from 'react-native';
 import NavBar from '../components/NavBar';
-import colorsDarkMode from '../theme/colorsDarkMode';
-import colorsLightMode from '../theme/colorsLightMode';
 import {useTheme} from '../theme/ThemeContext';
 import useRegister from '../hooks/useRegister';
+import ColorsLightMode from '../theme/ColorsLightMode';
+import ColorsDarkMode from '../theme/ColorsDarkMode';
 
 const RegisterScreen = ({navigation}: any) => {
     const {darkMode} = useTheme();
-    const colors = darkMode ? colorsDarkMode : colorsLightMode;
+    const colors = darkMode ? ColorsDarkMode : ColorsLightMode;
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -24,7 +24,7 @@ const RegisterScreen = ({navigation}: any) => {
     const {register, loading} = useRegister();
 
     const handleRegister = async () => {
-        const {success, data, message} = await register(
+        const {success, message} = await register(
             username,
             email,
             password,
@@ -44,21 +44,21 @@ const RegisterScreen = ({navigation}: any) => {
                     Register
                 </Text>
                 <TextInput
-                    style={[styles.input, {borderColor: colors.text}]}
+                    style={[styles.input, {borderColor: colors.text, color: colors.text}]}
                     placeholder="Username"
                     placeholderTextColor={colors.text}
                     value={username}
                     onChangeText={setUsername}
                 />
                 <TextInput
-                    style={[styles.input, {borderColor: colors.text}]}
+                    style={[styles.input, {borderColor: colors.text, color: colors.text}]}
                     placeholder="Email"
                     placeholderTextColor={colors.text}
                     value={email}
                     onChangeText={setEmail}
                 />
                 <TextInput
-                    style={[styles.input, {borderColor: colors.text}]}
+                    style={[styles.input, {borderColor: colors.text, color: colors.text}]}
                     placeholder="Password"
                     placeholderTextColor={colors.text}
                     secureTextEntry

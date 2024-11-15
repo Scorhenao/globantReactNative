@@ -1,16 +1,25 @@
-import React from 'react';
-import {
-    View,
-    Text,
-    FlatList,
-    Image,
-    StyleSheet,
-    ActivityIndicator,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, FlatList, Image, StyleSheet, ActivityIndicator} from 'react-native';
 import useVehicles from '../hooks/useVehicles';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
-const VehiclesScreen = ({token}: {token: string}) => {
+const VehiclesScreen = ({navigation}: any) => {
+    const [token, setToken] = useState<string | null>(null);
     const {vehicles, loading, error} = useVehicles(token);
+
+    useEffect(() => {
+        const fetchToken = async () => {
+            const storedToken = await AsyncStorage.getItem('userToken');
+            if (storedToken) {
+                setToken(storedToken);
+            } else {
+                // If no token, navigate to login screen
+                navigation.navigate('Login');
+            }
+        };
+
+        fetchToken();
+    }, [navigation]);
 
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
@@ -27,16 +36,11 @@ const VehiclesScreen = ({token}: {token: string}) => {
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
                     <View style={styles.vehicleCard}>
-                        <Image
-                            source={{uri: item.photo}}
-                            style={styles.vehicleImage}
-                        />
+                        <Image source={{uri: item.photo}} style={styles.vehicleImage} />
                         <Text style={styles.vehicleText}>
                             {item.make} {item.model} ({item.year})
                         </Text>
-                        <Text style={styles.vehicleText}>
-                            License Plate: {item.licensePlate}
-                        </Text>
+                        <Text style={styles.vehicleText}>License Plate: {item.licensePlate}</Text>
                     </View>
                 )}
             />

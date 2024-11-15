@@ -1,13 +1,13 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import colorsDarkMode from '../theme/colorsDarkMode';
-import colorsLightMode from '../theme/colorsLightMode';
 import {useTheme} from '../theme/ThemeContext';
+import ColorsDarkMode from '../theme/ColorsDarkMode';
+import ColorsLightMode from '../theme/ColorsLightMode';
 
 const NavBar: React.FC = () => {
     const {darkMode, setDarkMode} = useTheme();
-    const colors = darkMode ? colorsDarkMode : colorsLightMode;
+    const colors = darkMode ? ColorsDarkMode : ColorsLightMode;
 
     return (
         <View
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     iconButton: {
-        padding: 8,
+        padding: 4,
     },
 });
 
