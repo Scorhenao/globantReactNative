@@ -12,6 +12,7 @@ const AddVehicleScreen = ({navigation}: any) => {
     const [year, setYear] = useState('');
     const [licensePlate, setLicensePlate] = useState('');
     const [photo, setPhoto] = useState<string | null>(null);
+    const [errors, setErrors] = useState<any>({}); // To hold validation errors
 
     const {darkMode} = useTheme();
     const colors = darkMode ? ColorsDarkMode : ColorsLightMode;
@@ -26,7 +27,16 @@ const AddVehicleScreen = ({navigation}: any) => {
             Alert.alert('Success', response.message);
             navigation.navigate('VehiclesScreen');
         } else {
-            Alert.alert('Error', response.message);
+            // If response contains validation errors, set them to the state
+            if (response.message && Array.isArray(response.message)) {
+                const errorMessages: any = {};
+                response.message.forEach((error: any) => {
+                    errorMessages[error.field] = error.error; // Store error by field name
+                });
+                setErrors(errorMessages); // Set the errors in state
+            } else {
+                Alert.alert('Error', response.message);
+            }
         }
     };
 
@@ -68,6 +78,8 @@ const AddVehicleScreen = ({navigation}: any) => {
                 value={make}
                 onChangeText={setMake}
             />
+            {errors.make && <Text style={styles.errorText}>{errors.make}</Text>}
+            {/* Display error for Make */}
             <TextInput
                 style={[styles.input, {borderColor: colors.text, color: colors.text}]}
                 placeholder="Model"
@@ -75,6 +87,8 @@ const AddVehicleScreen = ({navigation}: any) => {
                 value={model}
                 onChangeText={setModel}
             />
+            {errors.model && <Text style={styles.errorText}>{errors.model}</Text>}
+            {/* Display error for Model */}
             <TextInput
                 style={[styles.input, {borderColor: colors.text, color: colors.text}]}
                 placeholder="Year"
@@ -83,6 +97,8 @@ const AddVehicleScreen = ({navigation}: any) => {
                 value={year}
                 onChangeText={setYear}
             />
+            {errors.year && <Text style={styles.errorText}>{errors.year}</Text>}
+            {/* Display error for Year */}
             <TextInput
                 style={[styles.input, {borderColor: colors.text, color: colors.text}]}
                 placeholder="License Plate"
@@ -90,6 +106,8 @@ const AddVehicleScreen = ({navigation}: any) => {
                 value={licensePlate}
                 onChangeText={setLicensePlate}
             />
+            {errors.licensePlate && <Text style={styles.errorText}>{errors.licensePlate}</Text>}
+            {/* Display error for License Plate */}
             {/* Display selected photo */}
             {photo && <Image source={{uri: photo}} style={styles.previewImage} />}
             <View style={styles.photoButtonsContainer}>
@@ -160,6 +178,11 @@ const styles = StyleSheet.create({
     buttonText: {
         fontWeight: 'bold',
         color: '#fff',
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 12,
+        marginBottom: 10,
     },
 });
 
