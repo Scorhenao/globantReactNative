@@ -27,10 +27,12 @@ const useVehicles = (token: string) => {
                         },
                     },
                 );
+                console.log(response);
                 if (response.status === 200) {
                     setVehicles(response.data.data);
                 }
-            } catch (err) {
+            } catch (err:any) {
+                console.error('Error fetching vehicles:', err.response ? err.response.data : err);
                 setError('Failed to fetch vehicles');
             } finally {
                 setLoading(false);

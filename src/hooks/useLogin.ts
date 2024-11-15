@@ -1,8 +1,15 @@
 import {useState} from 'react';
 import axios from 'axios';
 
+// Adjusted interface to match the API response structure
 interface LoginResponse {
-    token: string;
+    data: {
+        access_token: string; // The token is inside 'data'
+        user: {
+            email: string;
+            id: number;
+        };
+    };
     message: string;
 }
 
@@ -11,7 +18,7 @@ const useLogin = () => {
     const [error, setError] = useState<string | null>(null);
     const [token, setToken] = useState<string | null>(null);
 
-    const login = async (username: string, password: string) => {
+    const login = async (email: string, password: string) => {
         setLoading(true);
         setError(null);
 
@@ -19,16 +26,17 @@ const useLogin = () => {
             const response = await axios.post<LoginResponse>(
                 'https://maintenancesystembc-production.up.railway.app/api/v1/auth/login',
                 {
-                    username,
+                    email,
                     password,
                 },
             );
-            setToken(response.data.token); // Store the token
+            const accessToken = response.data.data.access_token; // Correctly access the token
+            setToken(accessToken); // Store the token
             setLoading(false);
-            return response.data.token; // Return the token after successful login
-        } catch (err: any ) {
+            return accessToken; // Return the token after successful login
+        } catch (err: any) {
             setLoading(false);
-            setError(error.response?.data?.message || 'An error occurred');
+            setError(err.response?.data?.message || 'An error occurred');
             return null;
         }
     };

@@ -10,10 +10,10 @@ const VehiclesScreen = ({navigation}: any) => {
     useEffect(() => {
         const fetchToken = async () => {
             const storedToken = await AsyncStorage.getItem('userToken');
+            console.log('Retrieved token from AsyncStorage:', storedToken);
             if (storedToken) {
                 setToken(storedToken);
             } else {
-                // If no token, navigate to login screen
                 navigation.navigate('Login');
             }
         };
