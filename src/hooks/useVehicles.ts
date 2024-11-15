@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useCallback} from 'react';
 import axios from 'axios';
 
 interface Vehicle {
@@ -10,41 +10,39 @@ interface Vehicle {
     photo: string;
 }
 
-const useVehicles = (token: string) => {
+const useVehicles = () => {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchVehicles = async () => {
-            setLoading(true);
-            try {
-                const response = await axios.get(
-                    'https://maintenancesystembc-production.up.railway.app/api/v1/vehicles',
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
+    const fetchVehicles = useCallback(async (token: string) => {
+        setLoading(true);
+        try {
+            const response = await axios.get(
+                'https://maintenancesystembc-production.up.railway.app/api/v1/vehicles',
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
                     },
-                );
-                console.log(response);
-                if (response.status === 200) {
-                    setVehicles(response.data.data);
-                }
-            } catch (err:any) {
-                console.error('Error fetching vehicles:', err.response ? err.response.data : err);
-                setError('Failed to fetch vehicles');
-            } finally {
-                setLoading(false);
+                },
+            );
+            if (response.status === 200) {
+                setVehicles(response.data.data);
             }
-        };
-
-        if (token) {
-            fetchVehicles();
+        } catch (err: any) {
+            console.error('Error fetching vehicles:', err.response ? err.response.data : err);
+            setError('Failed to fetch vehicles');
+        } finally {
+            setLoading(false);
         }
-    }, [token]);
+    }, []);
 
-    return {vehicles, loading, error};
+    return {
+        vehicles,
+        loading,
+        error,
+        refetchVehicles: fetchVehicles,
+    };
 };
 
 export default useVehicles;

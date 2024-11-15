@@ -1,16 +1,28 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, FlatList, Image, StyleSheet, ActivityIndicator} from 'react-native';
+import {
+    View,
+    Text,
+    FlatList,
+    Image,
+    StyleSheet,
+    ActivityIndicator,
+    TouchableOpacity,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useFocusEffect} from '@react-navigation/native';
 import useVehicles from '../hooks/useVehicles';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import {useTheme} from '../theme/ThemeContext';
+import ColorsDarkMode from '../theme/ColorsDarkMode';
+import ColorsLightMode from '../theme/ColorsLightMode';
 
 const VehiclesScreen = ({navigation}: any) => {
     const [token, setToken] = useState<string | null>(null);
-    const {vehicles, loading, error} = useVehicles(token);
+    const {vehicles, loading, error, refetchVehicles} = useVehicles();
 
     useEffect(() => {
         const fetchToken = async () => {
             const storedToken = await AsyncStorage.getItem('userToken');
-            console.log('Retrieved token from AsyncStorage:', storedToken);
             if (storedToken) {
                 setToken(storedToken);
             } else {
@@ -21,6 +33,17 @@ const VehiclesScreen = ({navigation}: any) => {
         fetchToken();
     }, [navigation]);
 
+    useFocusEffect(
+        React.useCallback(() => {
+            if (token) {
+                refetchVehicles(token);
+            }
+        }, [token]),
+    );
+
+    const {darkMode} = useTheme();
+    const colors = darkMode ? ColorsDarkMode : ColorsLightMode;
+
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
@@ -30,20 +53,34 @@ const VehiclesScreen = ({navigation}: any) => {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: colors.background}]}>
             <FlatList
                 data={vehicles}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
-                    <View style={styles.vehicleCard}>
-                        <Image source={{uri: item.photo}} style={styles.vehicleImage} />
-                        <Text style={styles.vehicleText}>
+                    <View style={[styles.vehicleCard, {borderColor: colors.border}]}>
+                        <Image
+                            source={{
+                                uri:
+                                    item.photo ||
+                                    'https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png',
+                            }}
+                            style={styles.vehicleImage}
+                        />
+                        <Text style={[styles.vehicleText, {color: colors.text}]}>
                             {item.make} {item.model} ({item.year})
                         </Text>
-                        <Text style={styles.vehicleText}>License Plate: {item.licensePlate}</Text>
+                        <Text style={[styles.vehicleText, {color: colors.text}]}>
+                            License Plate: {item.licensePlate}
+                        </Text>
                     </View>
                 )}
             />
+            <TouchableOpacity
+                style={[styles.floatingButton, {backgroundColor: colors.link}]}
+                onPress={() => navigation.navigate('AddVehicleScreen')}>
+                <Icon name="plus" size={24} color="#fff" />
+            </TouchableOpacity>
         </View>
     );
 };
@@ -55,18 +92,30 @@ const styles = StyleSheet.create({
     },
     vehicleCard: {
         marginBottom: 20,
-        padding: 10,
+        padding: 20,
         borderWidth: 1,
         borderRadius: 10,
+        alignItems: 'center',
     },
     vehicleImage: {
-        width: 100,
+        width: 200,
         height: 100,
         borderRadius: 10,
     },
     vehicleText: {
         fontSize: 16,
         marginTop: 5,
+    },
+    floatingButton: {
+        position: 'absolute',
+        bottom: 20,
+        right: 20,
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 5,
     },
 });
 
