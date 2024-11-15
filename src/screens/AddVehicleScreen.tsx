@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, TouchableOpacity, StyleSheet, Alert} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image} from 'react-native';
 import {useTheme} from '../theme/ThemeContext';
 import ColorsDarkMode from '../theme/ColorsDarkMode';
 import ColorsLightMode from '../theme/ColorsLightMode';
 import useAddVehicle from '../hooks/useAddVehicle';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 const AddVehicleScreen = ({navigation}: any) => {
     const [make, setMake] = useState('');
@@ -27,6 +28,34 @@ const AddVehicleScreen = ({navigation}: any) => {
         } else {
             Alert.alert('Error', response.message);
         }
+    };
+
+    const handleSelectPhoto = () => {
+        launchImageLibrary(
+            {
+                mediaType: 'photo',
+                quality: 0.8,
+            },
+            response => {
+                if (response.assets && response.assets.length > 0) {
+                    setPhoto(response.assets[0].uri || null);
+                }
+            },
+        );
+    };
+
+    const handleTakePhoto = () => {
+        launchCamera(
+            {
+                mediaType: 'photo',
+                quality: 0.8,
+            },
+            response => {
+                if (response.assets && response.assets.length > 0) {
+                    setPhoto(response.assets[0].uri || null);
+                }
+            },
+        );
     };
 
     return (
@@ -61,8 +90,22 @@ const AddVehicleScreen = ({navigation}: any) => {
                 value={licensePlate}
                 onChangeText={setLicensePlate}
             />
+            {/* Display selected photo */}
+            {photo && <Image source={{uri: photo}} style={styles.previewImage} />}
+            <View style={styles.photoButtonsContainer}>
+                <TouchableOpacity
+                    style={[styles.button, {backgroundColor: colors.link}]}
+                    onPress={handleSelectPhoto}>
+                    <Text style={styles.buttonText}>Select Photo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.button, {backgroundColor: colors.link}]}
+                    onPress={handleTakePhoto}>
+                    <Text style={styles.buttonText}>Take Photo</Text>
+                </TouchableOpacity>
+            </View>
             <TouchableOpacity
-                style={[styles.button, {backgroundColor: colors.link}]}
+                style={[styles.submitButton, {backgroundColor: colors.link}]}
                 onPress={handleAddVehicle}
                 disabled={loading}>
                 <Text style={[styles.buttonText, {color: colors.text}]}>
@@ -91,13 +134,32 @@ const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 15,
     },
+    previewImage: {
+        width: 320,
+        height: 200,
+        borderRadius: 10,
+        marginVertical: 15,
+    },
+    photoButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+    },
     button: {
+        padding: 10,
+        borderRadius: 8,
+        alignItems: 'center',
+        flex: 1,
+        marginHorizontal: 5,
+    },
+    submitButton: {
         padding: 15,
         borderRadius: 8,
         alignItems: 'center',
     },
     buttonText: {
         fontWeight: 'bold',
+        color: '#fff',
     },
 });
 
