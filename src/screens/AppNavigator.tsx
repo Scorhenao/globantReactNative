@@ -12,6 +12,7 @@ import NavBar from '../components/NavBar';
 import AddVehicleScreen from './AddVehicleScreen';
 import EditVehicleScreen from './EditVehicleScreen';
 import AddMaintenanceScreen from './AddMaintenanceScreen';
+import MaintenanceHistoryScreen from './MaintenanceHistoryScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -63,6 +64,9 @@ export default function AppNavigator() {
 
                 {/* Add Maintenance Screen */}
                 <Stack.Screen name="AddMaintenanceScreen" component={AddMaintenanceScreen} />
+
+                {/* Maintenance history */}
+                <Stack.Screen name="MaintenanceHistoryScreen" component={MaintenanceHistoryScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );

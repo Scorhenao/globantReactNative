@@ -44,6 +44,18 @@ const VehiclesScreen = ({navigation}: any) => {
         }, [token]),
     );
 
+    // Handle unauthorized errors and navigate to Home or Login
+    useEffect(() => {
+        if (error && error === 'Unauthorized') {
+            Alert.alert('Unauthorized', 'Session expired. Redirecting to Home...', [
+                {
+                    text: 'OK',
+                    onPress: () => navigation.navigate('Home'), // Navigate to Home
+                },
+            ]);
+        }
+    }, [error, navigation]);
+
     const {darkMode} = useTheme();
     const colors = darkMode ? ColorsDarkMode : ColorsLightMode;
 
@@ -93,7 +105,9 @@ const VehiclesScreen = ({navigation}: any) => {
                             </TouchableOpacity>
 
                             {/* Delete Icon */}
-                            <TouchableOpacity style={styles.iconDelete} onPress={() => handleDeleteVehicle(item.id)}>
+                            <TouchableOpacity
+                                style={styles.iconDelete}
+                                onPress={() => handleDeleteVehicle(item.id)}>
                                 <Icon name="trash" size={20} color="red" />
                             </TouchableOpacity>
 
@@ -105,6 +119,17 @@ const VehiclesScreen = ({navigation}: any) => {
                                     })
                                 }>
                                 <Icon name="wrench" size={20} color={colors.text} />
+                            </TouchableOpacity>
+
+                            {/* Maintenance History Icon */}
+                            <TouchableOpacity
+                                style={styles.iconHistory}
+                                onPress={() =>
+                                    navigation.navigate('MaintenanceHistoryScreen', {
+                                        vehicleId: item.id,
+                                    })
+                                }>
+                                <Icon name="history" size={20} color={colors.text} />
                             </TouchableOpacity>
                         </View>
                         <Image
@@ -172,6 +197,11 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     iconDelete: {
+        position: 'absolute',
+        bottom: -165,
+        left: 0,
+    },
+    iconHistory: {
         position: 'absolute',
         bottom: -165,
         right: 0,
