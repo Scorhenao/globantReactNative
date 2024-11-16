@@ -58,7 +58,7 @@ const VehiclesScreen = ({navigation}: any) => {
                 data={vehicles}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
-                    <View style={[styles.vehicleCard, {borderColor: colors.border}]}>
+                    <View style={[styles.vehicleCard, {borderColor: colors.text}]}>
                         <Image
                             source={{
                                 uri:
@@ -79,7 +79,7 @@ const VehiclesScreen = ({navigation}: any) => {
             <TouchableOpacity
                 style={[styles.floatingButton, {backgroundColor: colors.link}]}
                 onPress={() => navigation.navigate('AddVehicleScreen')}>
-                <Icon name="plus" size={24} color="#fff" />
+                <Icon name="plus" size={24} color={colors.text} />
             </TouchableOpacity>
         </View>
     );
