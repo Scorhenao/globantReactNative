@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useFocusEffect} from '@react-navigation/native';
 import useVehicles from '../hooks/useVehicles';
+import useDeleteVehicle from '../hooks/useDeleteVehicle'; // Import your custom hook
 import {useTheme} from '../theme/ThemeContext';
 import ColorsDarkMode from '../theme/ColorsDarkMode';
 import ColorsLightMode from '../theme/ColorsLightMode';
@@ -20,6 +21,7 @@ import ColorsLightMode from '../theme/ColorsLightMode';
 const VehiclesScreen = ({navigation}: any) => {
     const [token, setToken] = useState<string | null>(null);
     const {vehicles, loading, error, refetchVehicles} = useVehicles();
+    const {deleteVehicle, loading: deleteLoading, error: deleteError} = useDeleteVehicle();
 
     useEffect(() => {
         const fetchToken = async () => {
@@ -46,12 +48,10 @@ const VehiclesScreen = ({navigation}: any) => {
     const colors = darkMode ? ColorsDarkMode : ColorsLightMode;
 
     const handleEditVehicle = (vehicleId: number) => {
-        // Logic to navigate to the vehicle edit screen
         navigation.navigate('EditVehicleScreen', {vehicleId});
     };
 
     const handleDeleteVehicle = (vehicleId: number) => {
-        // Logic to delete vehicle
         Alert.alert('Delete Vehicle', 'Are you sure you want to delete this vehicle?', [
             {
                 text: 'Cancel',
@@ -59,22 +59,24 @@ const VehiclesScreen = ({navigation}: any) => {
             },
             {
                 text: 'Delete',
-                onPress: () => {
-                    // Call your delete function here
-                    console.log('Vehicle deleted:', vehicleId);
-                    // After deleting, you might want to refetch the list
-                    refetchVehicles(token); // Assuming this fetches the updated list
+                onPress: async () => {
+                    if (token) {
+                        const success = await deleteVehicle(vehicleId, token);
+                        if (success) {
+                            refetchVehicles(token); // Refetch vehicles after deletion
+                        }
+                    }
                 },
             },
         ]);
     };
 
-    if (loading) {
+    if (loading || deleteLoading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
 
-    if (error) {
-        return <Text>{error}</Text>;
+    if (error || deleteError) {
+        return <Text>{error || deleteError}</Text>;
     }
 
     return (
