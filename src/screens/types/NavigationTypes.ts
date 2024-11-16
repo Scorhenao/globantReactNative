@@ -6,4 +6,5 @@ export type RootStackParamList = {
     Register: undefined;
     VehiclesScreen: {token: string};
     AddVehicleScreen: undefined;
+    EditVehicleScreen: {vehicleId: string};
 };

@@ -7,6 +7,7 @@ import {
     StyleSheet,
     ActivityIndicator,
     TouchableOpacity,
+    Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -44,6 +45,30 @@ const VehiclesScreen = ({navigation}: any) => {
     const {darkMode} = useTheme();
     const colors = darkMode ? ColorsDarkMode : ColorsLightMode;
 
+    const handleEditVehicle = (vehicleId: number) => {
+        // Logic to navigate to the vehicle edit screen
+        navigation.navigate('EditVehicleScreen', {vehicleId});
+    };
+
+    const handleDeleteVehicle = (vehicleId: number) => {
+        // Logic to delete vehicle
+        Alert.alert('Delete Vehicle', 'Are you sure you want to delete this vehicle?', [
+            {
+                text: 'Cancel',
+                style: 'cancel',
+            },
+            {
+                text: 'Delete',
+                onPress: () => {
+                    // Call your delete function here
+                    console.log('Vehicle deleted:', vehicleId);
+                    // After deleting, you might want to refetch the list
+                    refetchVehicles(token); // Assuming this fetches the updated list
+                },
+            },
+        ]);
+    };
+
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
@@ -59,6 +84,17 @@ const VehiclesScreen = ({navigation}: any) => {
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
                     <View style={[styles.vehicleCard, {borderColor: colors.text}]}>
+                        <View style={styles.iconsContainer}>
+                            {/* Edit Icon */}
+                            <TouchableOpacity onPress={() => handleEditVehicle(item.id)}>
+                                <Icon name="pencil" size={20} color={colors.text} />
+                            </TouchableOpacity>
+
+                            {/* Delete Icon */}
+                            <TouchableOpacity onPress={() => handleDeleteVehicle(item.id)}>
+                                <Icon name="trash" size={20} color="red" />
+                            </TouchableOpacity>
+                        </View>
                         <Image
                             source={{
                                 uri:
@@ -116,6 +152,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 5,
+    },
+    iconsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginBottom: 10,
     },
 });
 
