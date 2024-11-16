@@ -93,8 +93,18 @@ const VehiclesScreen = ({navigation}: any) => {
                             </TouchableOpacity>
 
                             {/* Delete Icon */}
-                            <TouchableOpacity onPress={() => handleDeleteVehicle(item.id)}>
+                            <TouchableOpacity style={styles.iconDelete} onPress={() => handleDeleteVehicle(item.id)}>
                                 <Icon name="trash" size={20} color="red" />
+                            </TouchableOpacity>
+
+                            {/* Maintenance Icon */}
+                            <TouchableOpacity
+                                onPress={() =>
+                                    navigation.navigate('AddMaintenanceScreen', {
+                                        vehicleId: item.id,
+                                    })
+                                }>
+                                <Icon name="wrench" size={20} color={colors.text} />
                             </TouchableOpacity>
                         </View>
                         <Image
@@ -160,6 +170,11 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         width: '100%',
         marginBottom: 10,
+    },
+    iconDelete: {
+        position: 'absolute',
+        bottom: -165,
+        right: 0,
     },
 });
 

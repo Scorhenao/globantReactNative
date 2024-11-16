@@ -11,6 +11,7 @@ import AuthLoadingScreen from './AuthLoadingScreen';
 import NavBar from '../components/NavBar';
 import AddVehicleScreen from './AddVehicleScreen';
 import EditVehicleScreen from './EditVehicleScreen';
+import AddMaintenanceScreen from './AddMaintenanceScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -59,6 +60,9 @@ export default function AppNavigator() {
 
                 {/* Edit Vehicle Screen */}
                 <Stack.Screen name="EditVehicleScreen" component={EditVehicleScreen} />
+
+                {/* Add Maintenance Screen */}
+                <Stack.Screen name="AddMaintenanceScreen" component={AddMaintenanceScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );
